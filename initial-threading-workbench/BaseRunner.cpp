@@ -8,7 +8,8 @@
 /// <summary>
 /// This demonstrates a running parallax background where after X seconds, a batch of assets will be streamed and loaded.
 /// </summary>
-const sf::Time BaseRunner::TIME_PER_FRAME = sf::seconds(1.f / 60.f);
+const float EXPECTED_FRAME = 60.f;
+const sf::Time BaseRunner::TIME_PER_FRAME = sf::seconds(1.f / EXPECTED_FRAME);
 
 BaseRunner::BaseRunner() :
 	window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "HO: Entity Component", sf::Style::Close) {
@@ -29,20 +30,27 @@ BaseRunner::BaseRunner() :
 void BaseRunner::run() {
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
+	bool isFirstLoop = true;
+
 	while (this->window.isOpen())
 	{
-		sf::Time elapsedTime = clock.restart();
+		// Calculating the frame rate
+		sf::Time elapsedTime = isFirstLoop ? sf::Time::Zero : clock.restart();
 		timeSinceLastUpdate += elapsedTime;
-		while (timeSinceLastUpdate > TIME_PER_FRAME)
+
+		// Force constrict from updating the frame until timer hits 16.66 ms
+		while (timeSinceLastUpdate >= TIME_PER_FRAME)
 		{
-			timeSinceLastUpdate -= TIME_PER_FRAME;
+			// Remove timer constriction for frame rate calculation
+			timeSinceLastUpdate -= TIME_PER_FRAME; 
 
 			processEvents();
-			//update(TIME_PER_FRAME);
 			update(elapsedTime);
 		}
 
 		render();
+
+		isFirstLoop = false;
 	}
 }
 
