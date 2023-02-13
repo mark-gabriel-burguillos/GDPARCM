@@ -46,10 +46,11 @@ void TextureManager::loadSingleStreamAsset(int index)
 		{
 			//simulate loading of very large file
 			//<code here for thread sleeping. Fill this up only when instructor told so.>
-
-			
+			String path = entry.path().generic_string();
+			std::vector<String> tokens = StringUtils::split(path, '/');
+			String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
+			this->instantiateAsTexture(path, assetName, true);
 			//<code here for loading asset>
-			String assetName = "";
 	
 			std::cout << "[TextureManager] Loaded streaming texture: " << assetName << std::endl;
 			break;

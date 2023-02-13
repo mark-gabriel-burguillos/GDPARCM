@@ -24,6 +24,14 @@ void TextureDisplay::update(sf::Time deltaTime)
 	this->ticks += BaseRunner::TIME_PER_FRAME.asMilliseconds();
 	
 	//<code here for spawning icon object periodically>
+	// TODO implementation for when streamingType == BATCH_LOAD
+
+	if (this->ticks > this->STREAMING_LOAD_DELAY)
+	{
+		this->ticks = 0;
+		TextureManager::getInstance()->loadSingleStreamAsset(TextureManager::getInstance()->getNumLoadedStreamTextures());
+		this->spawnObject();
+	}
 }
 
 void TextureDisplay::spawnObject()
